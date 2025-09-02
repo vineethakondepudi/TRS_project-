@@ -1,3 +1,3 @@
 FROM tomcat:9.0
-COPY target/*.war /usr/local/tomcat/webapps/app.war
+COPY src/AdminLogin.html /usr/local/tomcat/webapps/ROOT/AdminLogin.html
 EXPOSE 8080
