@@ -1,10 +1,9 @@
 pipeline {
     agent any
-    environment {
-        DOCKERHUB_USER = "your-dockerhub-username"
-        DOCKERHUB_REPO = "trainbook-app"
-        CONTAINER_NAME = "trainbook-container"
-    }
+     environment{
+       DOCKERHUB_USER = "vineethakondepudi"
+         DOCKERHUB_REPO = "trainbook_container"
+}
     stages {
         stage("Build & Package") {
             steps {
@@ -13,12 +12,12 @@ pipeline {
         }
         stage("Build Docker Image") {
             steps {
-                sh "docker build -t ${DOCKERHUB_USER}/${DOCKERHUB_REPO}:latest ."
+                sh "docker build -t ${DOCKERHUB_USER}/${DOCKERHUB_REPO} ."
             }
         }
-        stage("Push to Docker Hub") {
+       stage("Push to Docker Hub") {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                withCredentials([usernamePassword(credentialsId: 'TRS_project', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
                     sh "docker push ${DOCKERHUB_USER}/${DOCKERHUB_REPO}:latest"
                 }
@@ -26,12 +25,9 @@ pipeline {
         }
         stage("Deploy") {
             steps {
-                // Stop & remove old container if exists
-                sh "docker rm -f ${CONTAINER_NAME} || true"
-                // Run new container
-                sh "docker run -d --name ${CONTAINER_NAME} -p 8082:8080 ${DOCKERHUB_USER}/${DOCKERHUB_REPO}:latest"
+                sh "docker rm -f trainbook-container || true"
+                sh "docker run -d --name trainbook-container -p 8082:8080 trainbook-app"
             }
         }
     }
 }
-
