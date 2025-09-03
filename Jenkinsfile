@@ -3,6 +3,7 @@ pipeline {
     environment {
         DOCKERHUB_USER = "your-dockerhub-username"
         DOCKERHUB_REPO = "trainbook-app"
+        CONTAINER_NAME = "trainbook-container"
     }
     stages {
         stage("Build & Package") {
@@ -25,8 +26,10 @@ pipeline {
         }
         stage("Deploy") {
             steps {
-                sh "docker rm -f trainbook-container || true"
-                sh "docker run -d --name trainbook-container -p 8082:8080 ${DOCKERHUB_USER}/${DOCKERHUB_REPO}:latest"
+                // Stop & remove old container if exists
+                sh "docker rm -f ${CONTAINER_NAME} || true"
+                // Run new container
+                sh "docker run -d --name ${CONTAINER_NAME} -p 8082:8080 ${DOCKERHUB_USER}/${DOCKERHUB_REPO}:latest"
             }
         }
     }
