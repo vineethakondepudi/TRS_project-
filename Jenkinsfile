@@ -23,6 +23,21 @@ pipeline {
                 }
             }
         }
+        stage("Deploy to Swarm") {
+    steps {
+        // Remove old service if exists
+        sh "docker service rm trainbook-container || true"
+        
+        // Deploy new service
+        sh """
+          docker service create \
+          --name trainbook-container \
+          --replicas 3 \
+          --publish 8082:80 \
+          ${DOCKERHUB_USER}/${DOCKERHUB_REPO}:latest
+        """
+    }
+}
         stage("Deploy") {
             steps {
                 sh "docker rm -f trainbook-container || true"
