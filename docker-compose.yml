@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  trainbook:
+    image: vineethakondepudi/trainbook-container:latest
+    ports:
+      - "8082:8080"
+    deploy:
+      replicas: 3          # Number of containers
+      restart_policy:
+        condition: on-failure
+    networks:
+      - trainbook-net
+
+networks:
+  trainbook-net:
+    driver: overlay
